@@ -1,0 +1,10 @@
+.DS_Store
+~$*
+
+# Local render/build outputs.
+render_*/
+
+# Non-final package variants from this workspace.
+hello_world_flutter_app_source.zip
+hello_world_flutter_app_source_clean.zip
+hello_world_flutter_submission_bundle/
