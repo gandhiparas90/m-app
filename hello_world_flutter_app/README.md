@@ -1,32 +1,31 @@
-# Study Buddy Flutter Lab
+# Gesture Studio Flutter Lab
 
-Study Buddy is a simple two-screen Flutter app for the Mobile App Lab UI
-Design assignment. The home screen introduces the app and navigates to a notes
-screen. The notes screen lets the user type a study note, save it, and clear it
-so the UI visibly updates during interaction.
+Gesture Studio is a two-screen Flutter app for the Gesture-Controlled Interface
+lab. The home screen introduces the lab and opens the interactive gesture
+screen. The gesture screen uses `GestureDetector` to handle tap, long press, and
+horizontal swipe interactions.
 
-## Widgets Used
+## Gestures Used
 
-This app uses both `StatelessWidget` and `StatefulWidget`. `StudyBuddyApp` and
-`HomeScreen` are stateless widgets because they display fixed UI elements such
-as the app title, icon, description, and navigation button. These widgets do not
-store changing data internally. The `Navigator.push` call moves the user from
-the home screen to the notes screen.
+The tap gesture changes the card color and updates the status message. This
+gives immediate feedback and makes the interaction easy to understand. The long
+press gesture toggles focus mode and displays a short SnackBar message, giving
+the user visible confirmation that a less common gesture was recognized.
 
-`NotesScreen` is a `StatefulWidget` because it manages dynamic content. It uses
-a `TextField` with a `TextEditingController` to capture user input, a Save Note
-button to update the displayed note, and a Clear Note button to reset the
-screen. When either button is pressed, `setState()` updates `_noteText` and
-rebuilds the widget so the current note shown on screen changes immediately.
+The horizontal swipe gesture moves between gesture cards. A small velocity
+threshold prevents weak accidental swipes from changing the card, which is the
+refinement made after testing. If the swipe is too light, the app updates the
+status panel and asks the user to try a stronger swipe.
 
 ## Screenshots to Submit
 
-Capture these views after running the app:
+Use the generated screenshots in the repository-level `screenshots` folder:
 
-1. Home screen with the Study Buddy title and Go to Notes button.
-2. Notes screen before entering text.
-3. Notes screen after typing a study note and pressing Save Note.
-4. Optional: notes screen after pressing Clear Note.
+1. `gesture_lab_home.png`
+2. `gesture_lab_initial.png`
+3. `gesture_lab_tap.png`
+4. `gesture_lab_long_press.png`
+5. `gesture_lab_swipe.png`
 
 ## Run
 

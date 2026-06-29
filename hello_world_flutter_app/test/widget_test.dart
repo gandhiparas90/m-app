@@ -4,52 +4,78 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hello_world_flutter_app/main.dart';
 
 void main() {
-  testWidgets('navigates to notes screen and updates note text', (
+  Future<void> openGestureLab(WidgetTester tester) async {
+    await tester.pumpWidget(const GestureLabApp());
+    await tester.tap(find.text('Open Gesture Lab'));
+    await tester.pumpAndSettle();
+  }
+
+  String statusText(WidgetTester tester) {
+    return tester
+        .widget<Text>(find.byKey(const Key('gestureStatusText')))
+        .data!;
+  }
+
+  testWidgets('opens the gesture lab from the home screen', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const StudyBuddyApp());
+    await openGestureLab(tester);
 
-    expect(find.text('Welcome to Study Buddy'), findsOneWidget);
-    expect(find.text('Go to Notes'), findsOneWidget);
-
-    await tester.tap(find.text('Go to Notes'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Study Notes'), findsOneWidget);
-    expect(find.text('No study note has been added yet.'), findsOneWidget);
-
-    await tester.enterText(
-      find.byType(TextField),
-      'Review stateless and stateful widgets',
-    );
-    await tester.tap(find.text('Save Note'));
-    await tester.pump();
-
-    expect(
-      tester.widget<Text>(find.byKey(const Key('currentNoteText'))).data,
-      'Review stateless and stateful widgets',
-    );
+    expect(find.text('Gesture Lab'), findsOneWidget);
+    expect(find.text('Try the Gestures'), findsOneWidget);
+    expect(find.text('Tap Practice'), findsOneWidget);
   });
 
-  testWidgets('clear note resets the displayed note', (
+  testWidgets('tap changes the visible status text', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const StudyBuddyApp());
+    await openGestureLab(tester);
 
-    await tester.tap(find.text('Go to Notes'));
+    await tester.tap(find.byKey(const Key('gestureCard')));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Practice Flutter UI');
-    await tester.tap(find.text('Save Note'));
+
+    expect(statusText(tester), 'Tap detected: color changed 1 time.');
+  });
+
+  testWidgets('long press toggles focus mode feedback', (
+    WidgetTester tester,
+  ) async {
+    await openGestureLab(tester);
+
+    await tester.longPress(find.byKey(const Key('gestureCard')));
     await tester.pump();
 
-    expect(
-      tester.widget<Text>(find.byKey(const Key('currentNoteText'))).data,
-      'Practice Flutter UI',
+    expect(statusText(tester), 'Long press detected: focus mode is on.');
+    expect(find.text('Focus mode turned on'), findsOneWidget);
+  });
+
+  testWidgets('horizontal swipe moves to the next gesture card', (
+    WidgetTester tester,
+  ) async {
+    await openGestureLab(tester);
+
+    await tester.fling(
+      find.byKey(const Key('gestureCard')),
+      const Offset(-300, 0),
+      900,
     );
+    await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Clear Note'));
-    await tester.pump();
+    expect(find.text('Swipe Practice'), findsOneWidget);
+    expect(statusText(tester), 'Swipe left detected: moved to Swipe Practice.');
+  });
 
-    expect(find.text('No study note has been added yet.'), findsOneWidget);
+  testWidgets('reset returns the screen to the initial gesture state', (
+    WidgetTester tester,
+  ) async {
+    await openGestureLab(tester);
+    await tester.tap(find.byKey(const Key('gestureCard')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Reset Gestures'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tap Practice'), findsOneWidget);
+    expect(statusText(tester), 'Ready: tap, long press, or swipe the card.');
   });
 }

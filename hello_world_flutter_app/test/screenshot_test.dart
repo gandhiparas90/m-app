@@ -44,67 +44,76 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
   }
 
-  testWidgets('captures home screen screenshot', (WidgetTester tester) async {
-    await setMobileSurface(tester);
-    await tester.pumpWidget(const StudyBuddyApp());
+  Future<void> openGestureLab(WidgetTester tester) async {
+    await tester.pumpWidget(const GestureLabApp());
+    await tester.tap(find.text('Open Gesture Lab'));
     await tester.pumpAndSettle();
+  }
 
-    await expectLater(
-      find.byType(StudyBuddyApp),
-      matchesGoldenFile('../screenshots/study_buddy_home.png'),
-    );
-  });
-
-  testWidgets('captures empty notes screen screenshot', (
+  testWidgets('captures gesture home screen screenshot', (
     WidgetTester tester,
   ) async {
     await setMobileSurface(tester);
-    await tester.pumpWidget(const StudyBuddyApp());
-    await tester.tap(find.text('Go to Notes'));
+    await tester.pumpWidget(const GestureLabApp());
     await tester.pumpAndSettle();
 
     await expectLater(
-      find.byType(StudyBuddyApp),
-      matchesGoldenFile('../screenshots/study_buddy_notes_empty.png'),
+      find.byType(GestureLabApp),
+      matchesGoldenFile('../screenshots/gesture_lab_home.png'),
     );
   });
 
-  testWidgets('captures saved note screen screenshot', (
+  testWidgets('captures initial gesture screen screenshot', (
     WidgetTester tester,
   ) async {
     await setMobileSurface(tester);
-    await tester.pumpWidget(const StudyBuddyApp());
-    await tester.tap(find.text('Go to Notes'));
-    await tester.pumpAndSettle();
-    await tester.enterText(
-      find.byType(TextField),
-      'Review stateless and stateful widgets',
-    );
-    await tester.tap(find.text('Save Note'));
-    await tester.pumpAndSettle();
+    await openGestureLab(tester);
 
     await expectLater(
-      find.byType(StudyBuddyApp),
-      matchesGoldenFile('../screenshots/study_buddy_notes_saved.png'),
+      find.byType(GestureLabApp),
+      matchesGoldenFile('../screenshots/gesture_lab_initial.png'),
     );
   });
 
-  testWidgets('captures cleared note screen screenshot', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('captures tap gesture screenshot', (WidgetTester tester) async {
     await setMobileSurface(tester);
-    await tester.pumpWidget(const StudyBuddyApp());
-    await tester.tap(find.text('Go to Notes'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Practice Flutter UI');
-    await tester.tap(find.text('Save Note'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Clear Note'));
+    await openGestureLab(tester);
+    await tester.tap(find.byKey(const Key('gestureCard')));
     await tester.pumpAndSettle();
 
     await expectLater(
-      find.byType(StudyBuddyApp),
-      matchesGoldenFile('../screenshots/study_buddy_notes_cleared.png'),
+      find.byType(GestureLabApp),
+      matchesGoldenFile('../screenshots/gesture_lab_tap.png'),
+    );
+  });
+
+  testWidgets('captures long press gesture screenshot', (
+    WidgetTester tester,
+  ) async {
+    await setMobileSurface(tester);
+    await openGestureLab(tester);
+    await tester.longPress(find.byKey(const Key('gestureCard')));
+    await tester.pump();
+
+    await expectLater(
+      find.byType(GestureLabApp),
+      matchesGoldenFile('../screenshots/gesture_lab_long_press.png'),
+    );
+  });
+
+  testWidgets('captures swipe gesture screenshot', (WidgetTester tester) async {
+    await setMobileSurface(tester);
+    await openGestureLab(tester);
+    await tester.fling(
+      find.byKey(const Key('gestureCard')),
+      const Offset(-300, 0),
+      900,
+    );
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byType(GestureLabApp),
+      matchesGoldenFile('../screenshots/gesture_lab_swipe.png'),
     );
   });
 }
